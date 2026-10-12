@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AL KHAN TRAVEL &amp; TOURISM — ERP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-mark" id="brandMark">
+        <img id="brandLogoImg" src="" style="display:none;max-width:100%;max-height:100%;object-fit:contain;">
+        <svg id="brandFallbackIcon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#3b1505" stroke-width="2"><path d="M2 16l20-8-8 20-3-9-9-3z"></path></svg>
+      </div>
+      <div class="brand-text">
+        <div class="t1" id="brandName">AL KHAN TRAVEL &amp; TOURISM</div>
+        <div class="t2">Shabqadar · Lic# 5831</div>
+      </div>
+    </div>
+    <div class="ticket-divider"></div>
+    <nav id="navList"></nav>
+    <div class="sidebar-foot">
+      <div id="linkStatusMini" class="link-status-badge" style="margin-bottom:10px;width:100%;justify-content:center;box-sizing:border-box;">Automatic saving: off</div>
+      This app can save its data straight back into this .html file.
+      <button id="linkFileBtn" type="button">💾 Automatic Saving</button>
+      <button id="exportBtn" type="button">Export backup (.json)</button>
+      <button id="importBtn" type="button">Import backup</button>
+      <button id="clearBtn" type="button">Start fresh (clear sample data)</button>
+      <input type="file" id="importFile" accept=".json" style="display:none;">
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div id="main">
+    <div class="brandline"></div>
+    <div id="topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button id="menuToggle" aria-label="Menu">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2b1708" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+        </button>
+        <div>
+          <div id="pageTitle">Dashboard</div>
+          <div id="pageSub">Overview of your business</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <label class="cur-pill" title="Display currency — converts every figure in the app">
+          <span>Show in</span><select id="dispCurrency" class="cur-sel"></select>
+        </label>
+        <div class="icon-btn" id="topbarLinkBtn" title="Automatic Saving — Data &amp; Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path><path d="M17 21v-8H7v8"></path><path d="M7 3v5h8"></path></svg>
+        </div>
+        <div class="icon-btn" id="settingsBtn" title="Company profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 01-4 0v-.09A1.7 1.7 0 009 19.4a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.55-1H3a2 2 0 010-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.55V3a2 2 0 014 0v.09a1.7 1.7 0 001 1.55 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9c.14.36.4.66.73.86.3.2.66.3 1.02.31H21a2 2 0 010 4h-.09a1.7 1.7 0 00-1.55 1z"></path></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section class="page" id="page-dashboard">
+      <div class="toolbar">
+        <select id="dashMonth"></select>
+        <div class="spacer"></div>
+      </div>
+      <div class="grid cols-4" id="dashKpis"></div>
+      <div class="grid cols-2" style="margin-top:18px;">
+        <div class="card">
+          <h2 class="section-title">Sales by service type <span class="muted">selected month</span></h2>
+          <div class="bar-chart-row" id="dashChartService"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Monthly sales trend <span class="muted">last 6 months</span></h2>
+          <div class="bar-chart-row" id="dashChartTrend"></div>
+        </div>
+      </div>
+      <div class="grid cols-2" style="margin-top:18px;">
+        <div class="card">
+          <h2 class="section-title">Service mix <span class="muted">selected month, by sale value</span></h2>
+          <div id="dashDonutService"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Receivable vs payable <span class="muted">all-time outstanding</span></h2>
+          <div id="dashCompare"></div>
+        </div>
+      </div>
+      <div class="grid cols-2" style="margin-top:18px;">
+        <div class="card">
+          <h2 class="section-title">Top customers <span class="muted">by sales, selected month</span></h2>
+          <div id="dashTopCustomers"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Payment status <span class="muted">selected month, by invoice count</span></h2>
+          <div id="dashPaymentStatus"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Cash &amp; bank balances</h2>
+        <div class="table-wrap"><table><thead class="hdr-teal"><tr><th>Account</th><th>Received</th><th>Paid out</th><th>Balance</th></tr></thead><tbody id="dashBankTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ---------- DATA ENTRY ---------- -->
+    <section class="page" id="page-dataentry">
+      <div class="card">
+        <h2 class="section-title" id="deFormTitle">New entry</h2>
+        <form id="deForm">
+          <div class="field-row">
+            <div class="field">
+              <label>Service type</label>
+              <select id="de_serviceType"></select>
+            </div>
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="de_date" required="">
+            </div>
+            <div class="field">
+              <label>Invoice No. <span style="font-weight:400;color:var(--ink-soft);">(auto)</span></label>
+              <input type="text" id="de_invoiceNo" class="mono" disabled="">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Bill to / Customer</label>
+              <input type="text" id="de_billTo" placeholder="Customer or branch name" required="">
+            </div>
+            <div class="field">
+              <label>Vendor / Supplier</label>
+              <input type="text" id="de_vendor" placeholder="Vendor name">
+            </div>
+            <div class="field">
+              <label>Sub agent <span style="font-weight:400;">(optional)</span></label>
+              <input type="text" id="de_subAgent">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Sale by <span style="font-weight:400;">(sales employee)</span></label>
+              <select id="de_saleBy"><option value="">— none —</option></select>
+            </div>
+            <div class="field">
+              <label>Purchase by <span style="font-weight:400;">(sales employee)</span></label>
+              <select id="de_purchaseBy"><option value="">— none —</option></select>
+            </div>
+          </div>
+          <div class="field-row" id="de_rateRow">
+            <div class="field">
+              <label id="de_saleLbl">Sale rate</label>
+              <input type="number" step="0.01" id="de_saleRate" required="">
+            </div>
+            <div class="field">
+              <label id="de_purchLbl">Purchase rate</label>
+              <input type="number" step="0.01" id="de_purchaseRate">
+            </div>
+            <div class="field">
+              <label>Currency <span style="font-weight:400;color:var(--ink-soft);">(amounts entered in)</span></label>
+              <select id="de_currency" class="cur-select"></select>
+            </div>
+            <div class="field">
+              <label>Payment status</label>
+              <select id="de_status">
+                <option>Unpaid</option>
+                <option>Partial</option>
+                <option>Paid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="conv-hint" id="de_convHint"></div>
+          <div id="de_dynamicFields" class="field-row"></div>
+
+          <div style="display:flex;gap:10px;margin-top:6px;">
+            <button type="submit" class="btn gold" id="de_submitBtn">Save entry</button>
+            <button type="button" class="btn ghost" id="de_cancelEdit" style="display:none;">Cancel edit</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">All entries <span class="muted" id="deCount"></span></h2>
+        <div class="toolbar">
+          <input type="text" id="deSearch" placeholder="Search invoice no. / name...">
+          <select id="deFilterType"><option value="">All service types</option></select>
+          <div class="spacer"></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead class="hdr-gold"><tr><th>Inv#</th><th>Date</th><th>Service</th><th>Bill to</th><th>Sale by</th><th>Entered</th><th>Sale</th><th>Purchase</th><th>Profit</th><th>Status</th><th></th></tr></thead>
+            <tbody id="deTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- INVOICE ---------- -->
+    <section class="page" id="page-invoice">
+      <div class="invoice-layout">
+        <div class="card">
+          <h2 class="section-title">Select invoice</h2>
+          <div class="field">
+            <label>Invoice number</label>
+            <select id="invSelect"><option value="">— choose invoice —</option></select>
+          </div>
+          <div class="field">
+            <label>Or search by customer / passenger</label>
+            <input type="text" id="invSearch" placeholder="Type to search...">
+            <div id="invSearchResults" style="margin-top:8px;max-height:220px;overflow-y:auto;"></div>
+          </div>
+          <div class="field">
+            <label>Show invoice in currency</label>
+            <select id="invCurrency" class="cur-select" data-use-base="1"></select>
+          </div>
+          <button class="btn gold" id="invPrintBtn" style="width:100%;justify-content:center;margin-top:6px;">Print / Export PDF</button>
+        </div>
+        <div>
+          <div id="invoicePlaceholder" class="card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6M9 16h6M9 8h6M5 21V5a2 2 0 012-2h7l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2z"></path></svg>
+            <div>Choose an invoice number to preview it here.<br>Everything auto-fills from Data Entry — nothing to retype.</div>
+          </div>
+          <div id="invoicePrintArea" class="print-area" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- RECEIPT ---------- -->
+    <section class="page" id="page-receipt">
+      <div class="card">
+        <h2 class="section-title">Record a receipt</h2>
+        <form id="rcForm">
+          <div class="field-row">
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="rc_date" required="">
+            </div>
+            <div class="field">
+              <label>Invoice No.</label>
+              <select id="rc_invoiceNo" required=""><option value="">— select —</option></select>
+            </div>
+            <div class="field">
+              <label>Receipt No. <span style="font-weight:400;color:var(--ink-soft);">(auto)</span></label>
+              <input type="text" id="rc_receiptNo" class="mono" disabled="">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Customer</label>
+              <input type="text" id="rc_customer" disabled="">
+            </div>
+            <div class="field">
+              <label>Balance due</label>
+              <input type="text" id="rc_balanceDue" disabled="" class="mono">
+            </div>
+            <div class="field">
+              <label>Amount received</label>
+              <input type="number" step="0.01" id="rc_amount" required="">
+            </div>
+            <div class="field">
+              <label>Currency</label>
+              <select id="rc_currency" class="cur-select"></select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Account</label>
+              <select id="rc_account"></select>
+            </div>
+            <div class="field">
+              <label>Amount received by <span style="font-weight:400;">(salesperson)</span></label>
+              <select id="rc_receivedBy"><option value="">— none —</option></select>
+            </div>
+          </div>
+          <button type="submit" class="btn gold">Save receipt</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Receipt history</h2>
+        <div class="table-wrap"><table><thead class="hdr-teal"><tr><th>Rcpt#</th><th>Date</th><th>Invoice</th><th>Customer</th><th>Amount</th><th>Account</th><th>Received by</th><th></th></tr></thead><tbody id="rcTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ---------- PAYMENT ---------- -->
+    <section class="page" id="page-payment">
+      <div class="card">
+        <h2 class="section-title">Record a payment</h2>
+        <form id="pyForm">
+          <div class="field-row">
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="py_date" required="">
+            </div>
+            <div class="field">
+              <label>Vendor</label>
+              <input type="text" id="py_vendor" list="vendorList" required="">
+              <datalist id="vendorList"></datalist>
+            </div>
+            <div class="field">
+              <label>Reference No. <span style="font-weight:400;color:var(--ink-soft);">(auto)</span></label>
+              <input type="text" id="py_refNo" class="mono" disabled="">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Related invoice <span style="font-weight:400;">(optional)</span></label>
+              <select id="py_invoiceRef"><option value="">— none / general —</option></select>
+            </div>
+            <div class="field">
+              <label>Amount</label>
+              <input type="number" step="0.01" id="py_amount" required="">
+            </div>
+            <div class="field">
+              <label>Currency</label>
+              <select id="py_currency" class="cur-select"></select>
+            </div>
+            <div class="field">
+              <label>Account</label>
+              <select id="py_account"></select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Amount paid by <span style="font-weight:400;">(salesperson)</span></label>
+              <select id="py_paidBy"><option value="">— none —</option></select>
+            </div>
+          </div>
+          <button type="submit" class="btn gold">Save payment</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Payment history</h2>
+        <div class="table-wrap"><table><thead class="hdr-red"><tr><th>Ref#</th><th>Date</th><th>Vendor</th><th>Invoice</th><th>Amount</th><th>Account</th><th>Paid by</th><th></th></tr></thead><tbody id="pyTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ---------- CUSTOMER LEDGER ---------- -->
+    <section class="page" id="page-custledger">
+      <div class="card">
+        <div class="toolbar">
+          <label style="margin:0;">Customer:</label>
+          <select id="clCustomer"></select>
+          <div class="spacer"></div>
+          <button class="btn gold sm" id="clPrintBtn" type="button">🖨 Print / Save as PDF</button>
+        </div>
+        <div id="clpBar"></div>
+        <div class="grid cols-4" id="clSummary" style="margin-bottom:16px;"></div>
+        <div class="table-wrap"><table><thead class="hdr-purple"><tr><th>Date</th><th>Ref</th><th>Details</th><th>Sale (Debit)</th><th>Received (Credit)</th><th>Balance</th></tr></thead><tbody id="clTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ---------- SUPPLIER LEDGER ---------- -->
+    <section class="page" id="page-suppledger">
+      <div class="card">
+        <div class="toolbar">
+          <label style="margin:0;">Vendor:</label>
+          <select id="slVendor"></select>
+          <div class="spacer"></div>
+          <button class="btn gold sm" id="svPrintBtn" type="button">🖨 Print / Save as PDF</button>
+        </div>
+        <div id="svpBar"></div>
+        <div class="grid cols-4" id="slSummary" style="margin-bottom:16px;"></div>
+        <div class="table-wrap"><table><thead class="hdr-orange"><tr><th>Date</th><th>Ref</th><th>Details</th><th>Purchase</th><th>Paid</th><th>Balance payable</th></tr></thead><tbody id="slTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ---------- SALESPERSON (AGENT) LEDGER ---------- -->
+    <section class="page" id="page-salesledger">
+      <div class="card">
+        <h2 class="section-title">Salespeople <span class="muted">add employees, upload their signature</span></h2>
+        <form id="spForm" class="field-row" style="align-items:end;grid-template-columns:2fr 2fr 1fr;">
+          <div class="field" style="margin-bottom:0;">
+            <label>Name</label>
+            <input type="text" id="sp_name" placeholder="Employee name" required="">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Phone <span style="font-weight:400;">(optional)</span></label>
+            <input type="text" id="sp_phone" placeholder="Phone number">
+          </div>
+          <button class="btn gold" type="submit" style="justify-content:center;">Add</button>
+        </form>
+        <div class="sp-list" id="spList"></div>
+        <input type="file" id="spSigFile" accept="image/*" style="display:none;">
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Pay / receive — internal transfer <span class="muted">move cash between a salesperson and the business, any day</span></h2>
+        <form id="xfForm">
+          <div class="field-row">
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="xf_date" required="">
+            </div>
+            <div class="field">
+              <label>Salesperson</label>
+              <select id="xf_salesperson" required=""></select>
+            </div>
+            <div class="field">
+              <label>Direction</label>
+              <select id="xf_direction">
+                <option value="toSalesperson">Business → Salesperson (pay employee)</option>
+                <option value="toBusiness">Salesperson → Business (receive from employee)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Amount</label>
+              <input type="number" id="xf_amount" min="0" step="0.01" required="">
+            </div>
+            <div class="field">
+              <label>Currency</label>
+              <select id="xf_currency" class="cur-select"></select>
+            </div>
+            <div class="field">
+              <label>Account</label>
+              <select id="xf_account"></select>
+            </div>
+            <div class="field">
+              <label>Note <span style="font-weight:400;">(optional)</span></label>
+              <input type="text" id="xf_note" placeholder="e.g. Daily cash handover, salary advance">
+            </div>
+          </div>
+          <button type="submit" class="btn gold">Record transfer</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <label style="margin:0;">Salesperson:</label>
+          <select id="slAgent"></select>
+          <div class="spacer"></div>
+          <button class="btn gold sm" id="slPrintBtn" type="button">🖨 Print / Save as PDF</button>
+        </div>
+        <div class="range-toolbar">
+          <label style="margin:0;">View</label>
+          <select id="slRangeType">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly" selected="">Monthly</option>
+            <option value="yearly">Yearly</option>
+            <option value="custom">Between two dates</option>
+          </select>
+          <input type="date" id="slDay" style="display:none;">
+          <input type="week" id="slWeek" style="display:none;">
+          <input type="month" id="slMonth" style="display:none;">
+          <input type="number" id="slYear" style="display:none;width:100px;" placeholder="Year">
+          <input type="date" id="slFrom" style="display:none;" title="From">
+          <span id="slToLbl" style="display:none;font-size:12px;color:var(--ink-soft);">to</span>
+          <input type="date" id="slTo" style="display:none;" title="To">
+          <div class="spacer"></div>
+          <span id="slRangeLabel" class="mono" style="font-weight:700;font-size:12px;"></span>
+        </div>
+        <div class="grid cols-4" id="slSummary2" style="margin-bottom:16px;"></div>
+        <div class="table-wrap"><table><thead class="hdr-purple"><tr><th>Date</th><th>Ref#</th><th>Type</th><th>Description</th><th>Sale</th><th>Purchase</th><th>Debit</th><th>Credit</th><th>Balance</th><th></th></tr></thead><tbody id="slAgentTable"></tbody></table></div>
+      </div>
+
+      <div id="slPrintArea" class="print-area" style="display:none;"></div>
+
+      <div class="card">
+        <h2 class="section-title">Employee activity report <span class="muted">received vs paid, and running balance</span></h2>
+        <div class="toolbar">
+          <label style="margin:0;">Chart by:</label>
+          <select id="slChartGran">
+            <option value="daily">Daily</option>
+            <option value="weekly" selected="">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+          <div class="spacer"></div>
+        </div>
+        <div style="margin-bottom:24px;">
+          <div class="muted" style="font-size:12px;margin-bottom:8px;">Received (Debit) vs Paid (Credit) per period</div>
+          <div class="grouped-bar-row" id="slChartBars"></div>
+          <div class="chart-legend"><span><span class="dot" style="background:var(--teal);"></span>Received</span><span><span class="dot" style="background:var(--red);"></span>Paid</span></div>
+        </div>
+        <div>
+          <div class="muted" style="font-size:12px;margin-bottom:8px;">Running balance</div>
+          <div class="linechart-wrap" id="slChartBalance"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- CASH / BANK ---------- -->
+    <section class="page" id="page-cashbank">
+      <div class="card">
+        <div class="toolbar">
+          <label style="margin:0;">Account:</label>
+          <select id="cbAccount"></select>
+          <div class="spacer"></div>
+        </div>
+        <div class="grid cols-3" id="cbSummary" style="margin-bottom:16px;"></div>
+      </div>
+      <div class="grid cols-4" style="margin-bottom:18px;">
+        <div class="card" style="padding:14px 16px;">
+          <h2 class="section-title" style="font-size:13px;">Today</h2>
+          <div id="cbToday"></div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <h2 class="section-title" style="font-size:13px;">This week</h2>
+          <div id="cbWeek"></div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <h2 class="section-title" style="font-size:13px;">This month</h2>
+          <div id="cbMonth"></div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <h2 class="section-title" style="font-size:13px;">This year</h2>
+          <div id="cbYear"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="toolbar">
+          <label style="margin:0;">Breakdown by:</label>
+          <select id="cbGranularity">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly" selected="">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+          <div class="spacer"></div>
+        </div>
+        <div class="table-wrap"><table><thead class="hdr-navy"><tr><th>Period</th><th>Receipts</th><th>Payments</th><th>Net</th><th>Balance</th></tr></thead><tbody id="cbTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ---------- P&L ---------- -->
+    <section class="page" id="page-pl">
+      <div class="toolbar">
+        <div id="plpBar" style="flex:1;"></div>
+        <button class="btn gold sm" id="plPrintBtn" type="button">🖨 Print / Save as PDF</button>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Profit &amp; loss by service type</h2>
+        <div class="table-wrap"><table><thead class="hdr-navy"><tr><th>Service</th><th>Sales</th><th>Cost</th><th>Gross profit</th></tr></thead><tbody id="plTable"></tbody></table></div>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h2 class="section-title">Sales vs cost by service</h2>
+          <div class="grouped-bar-row" id="plGroupedChart"></div>
+          <div class="chart-legend"><span><span class="dot" style="background:var(--purple);"></span>Sales</span><span><span class="dot" style="background:var(--orange);"></span>Cost</span></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Expenses by category</h2>
+          <div id="plExpDonut"></div>
+        </div>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h2 class="section-title">Expense trend <span class="muted">last 6 months</span></h2>
+          <div class="linechart-wrap" id="plExpenseTrend"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Profit margin trend <span class="muted">last 6 months, %</span></h2>
+          <div class="linechart-wrap" id="plMarginTrend"></div>
+        </div>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h2 class="section-title">Expenses <span class="muted" id="plExpTotal"></span></h2>
+          <form id="expForm" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <input type="date" id="exp_date" required="" style="width:140px;">
+            <input type="text" id="exp_name" placeholder="Expense name" required="" style="width:150px;">
+            <input type="text" id="exp_category" placeholder="Category" style="width:120px;">
+            <input type="number" step="0.01" id="exp_amount" placeholder="Amount" required="" style="width:110px;">
+            <select id="exp_currency" class="cur-select" style="width:92px;"></select>
+            <button class="btn sm gold" type="submit">Add</button>
+          </form>
+          <div class="table-wrap" style="max-height:220px;overflow-y:auto;"><table><thead class="hdr-red"><tr><th>Date</th><th>Name</th><th>Category</th><th>Amount</th><th></th></tr></thead><tbody id="expTable"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Net result</h2>
+          <div class="grid cols-2" id="plNet"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- DAY BOOK ---------- -->
+    <section class="page" id="page-daybook">
+      <div class="grid cols-2">
+        <div class="card">
+          <h2 class="section-title">Daily debit vs credit</h2>
+          <div class="grouped-bar-row" id="dbGroupedChart"></div>
+          <div class="chart-legend"><span><span class="dot" style="background:var(--purple);"></span>Debit</span><span><span class="dot" style="background:var(--orange);"></span>Credit</span></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Running balance trend</h2>
+          <div class="linechart-wrap" id="dbLineChart"></div>
+        </div>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h2 class="section-title">Transaction mix <span class="muted">by amount, filtered range</span></h2>
+          <div id="dbTypeBreakdown"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Top parties <span class="muted">by activity, filtered range</span></h2>
+          <div id="dbTopParties"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="toolbar">
+          <label style="margin:0;">From</label><input type="date" id="dbFrom" style="width:150px;">
+          <label style="margin:0;">To</label><input type="date" id="dbTo" style="width:150px;">
+          <select id="dbType"><option value="">All types</option><option>Sale</option><option>Receipt</option><option>Payment</option></select>
+          <div class="spacer"></div>
+          <span id="dbBalance" class="mono" style="font-weight:700;"></span>
+          <button class="btn gold sm" id="dbPrintBtn" type="button">🖨 Print / Save as PDF</button>
+        </div>
+        <div class="table-wrap"><table><thead class="hdr-magenta"><tr><th>Date</th><th>Ref#</th><th>Type</th><th>Party</th><th>Description</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead><tbody id="dbTable"></tbody></table></div>
+      </div>
+    </section>
+
+
+    <!-- ---------- CURRENCIES ---------- -->
+    <section class="page" id="page-currency">
+      <div class="grid cols-2">
+        <div class="card">
+          <h2 class="section-title">Currency converter</h2>
+          <div class="conv-grid">
+            <div class="field" style="margin:0;"><label>Amount</label><input type="number" step="0.01" id="cv_amount" value="1000"></div>
+            <div class="field" style="margin:0;"><label>From</label><select id="cv_from" class="cur-select" data-use-base="1"></select></div>
+            <button type="button" class="btn ghost" id="cv_swap" title="Swap" style="height:38px;justify-content:center;">⇄</button>
+            <div class="field" style="margin:0;"><label>To</label><select id="cv_to" class="cur-select" data-use-base="1"></select></div>
+          </div>
+          <div class="conv-result"><div class="big" id="cv_result">—</div><div class="sm" id="cv_rate"></div></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">How currencies work</h2>
+          <div style="font-size:13px;line-height:1.7;color:var(--ink-soft);">
+            All books are kept in the <b style="color:var(--ink);" id="cv_baseName">PKR</b> base currency.<br>
+            • Pick a currency on any entry, receipt, payment or expense — it is converted to the base using the rate saved here.<br>
+            • Use <b style="color:var(--ink);">Show in</b> at the top to view the whole app (dashboard, ledgers, P&amp;L) in another currency.<br>
+            • Invoices can be printed in any currency.<br>
+            • Changing a rate affects new entries and conversions; saved entries keep the amounts they were recorded with.
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Exchange rates <span class="muted">1 unit of currency = ? base currency — edit to match today's rate</span></h2>
+        <div class="table-wrap"><table class="rate-table"><thead class="hdr-gold"><tr><th style="width:90px;">Code</th><th>Name</th><th style="width:90px;">Symbol</th><th style="width:170px;">Rate (in base)</th><th style="width:80px;"></th></tr></thead><tbody id="rateTable"></tbody></table></div>
+        <form id="curAddForm" style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+          <input type="text" id="ca_code" placeholder="Code (e.g. OMR)" maxlength="5" required style="width:130px;text-transform:uppercase;">
+          <input type="text" id="ca_name" placeholder="Currency name" required style="width:180px;">
+          <input type="text" id="ca_symbol" placeholder="Symbol" style="width:90px;">
+          <input type="number" step="0.0001" min="0" id="ca_rate" placeholder="Rate in base" required style="width:140px;">
+          <button class="btn sm gold" type="submit">Add currency</button>
+        </form>
+      </div>
+    </section>
+    <div id="rptPrintArea" class="print-area" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" id="settingsClose">✕</button>
+    <h3>Company profile</h3>
+    <div class="sub">Shown on every printed invoice — logo, name and address.</div>
+    <div class="field">
+      <label>Logo</label>
+      <div class="logo-upload" id="logoUpload">
+        <img id="logoPreview" style="display:none;">
+        <div id="logoPlaceholderText">Click to upload a logo (PNG/JPG)</div>
+        <div class="hint">Stored locally, used on invoices</div>
+      </div>
+      <input type="file" id="logoFile" accept="image/*" style="display:none;">
+    </div>
+    <div class="field"><label>Company name</label><input type="text" id="co_name"></div>
+    <div class="field"><label>Address</label><textarea id="co_address"></textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Phone</label><input type="text" id="co_phone"></div>
+      <div class="field"><label>License #</label><input type="text" id="co_license"></div>
+      <div class="field"><label>Email</label><input type="text" id="co_email"></div>
+    </div>
+    <div class="field"><label>Next invoice number (if no entries yet)</label><input type="number" id="co_seed"></div>
+    <div class="field">
+      <label>Bank accounts <span style="font-weight:400;">(comma-separated, "Cash" is always included)</span></label>
+      <input type="text" id="co_banks" placeholder="e.g. Meezan Bank, HBL">
+    </div>
+    <div class="field">
+      <label>Authorized signature <span style="font-weight:400;">(fallback, used when a salesperson has no signature on file)</span></label>
+      <div class="logo-upload" id="sigUpload">
+        <img id="sigPreview" style="display:none;">
+        <div id="sigPlaceholderText">Click to upload a signature (PNG/JPG)</div>
+        <div class="hint">Shown on invoices unless the salesperson has their own signature</div>
+      </div>
+      <input type="file" id="sigFile" accept="image/*" style="display:none;">
+    </div>
+    <button class="btn gold" id="co_save" style="width:100%;justify-content:center;margin-top:6px;">Save profile</button>
+  </div>
+</div>
+
+<!-- ============ AUTOMATIC SAVING MODAL ============ -->
+<div class="modal-backdrop" id="linkModal">
+  <div class="modal">
+    <button class="modal-close" id="linkModalClose">✕</button>
+    <h3 id="linkModalTitle">Automatic Saving</h3>
+    <div class="sub" id="linkModalSub" style="margin-bottom:14px;"></div>
+    <div id="linkModalStatus" style="margin-bottom:14px;"></div>
+    <div id="linkModalBody"></div>
+    <div id="linkModalActions" style="display:flex;justify-content:space-between;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);"></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="cloud.js"></script>
+<script src="app.js"></script>
+</body></html>
